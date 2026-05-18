@@ -1,6 +1,6 @@
 # Maldini
 
-Maldini is one of Spain's most prominent football journalists. Every week on his YouTube channel [@mundomaldini](https://www.youtube.com/@mundomaldini) he makes explicit, probabilistic predictions about upcoming matches. This project captures every prediction, scores it objectively with a [Brier score](https://en.wikipedia.org/wiki/Brier_score), and surfaces the answer in a live dashboard.
+*Maldini* is one of Spain's most prominent football journalists. Every week on his YouTube channel [@mundomaldini](https://www.youtube.com/@mundomaldini) he makes explicit, probabilistic predictions about upcoming matches. This project captures every prediction, scores it objectively with a [Brier score](https://en.wikipedia.org/wiki/Brier_score), and surfaces the answer in a live dashboard.
 
 **[▶ Live dashboard](https://0trm.blog/maldini-stats/)**
 
@@ -59,7 +59,7 @@ Maldini earns the superforecaster badge only when his all-time average Brier sco
                                   ▼
                        GitHub Pages (auto)
 
-(*) Optional manual scoreline fixups for matches TheSportsDB can't auto-resolve.
+(*) Manual scoreline fixups for matches TheSportsDB can't auto-resolve.
 Schedule: GitHub Actions cron, Sundays 08:00 UTC (.github/workflows/weekly.yml).
 ```
 
@@ -69,7 +69,7 @@ Schedule: GitHub Actions cron, Sundays 08:00 UTC (.github/workflows/weekly.yml).
 
 ## Transformation
 
-All SQL runs in **DuckDB** in-process, embedded inside `src/maldini/pipeline.py` (scoring) and `src/maldini/render.py` (summary stats). No warehouse, no credentials, no quotas.
+All SQL runs in **DuckDB** in-process, embedded inside `src/maldini/pipeline.py` (scoring) and `src/maldini/render.py` (summary stats).
 
 Brier score variants:
 
