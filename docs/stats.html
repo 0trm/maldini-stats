@@ -1,0 +1,267 @@
+<style>
+  :root {
+    --bg: #ffffff; --fg: #444444;
+    --blue: #2255aa; --magenta: #994466; --orange: #cc6622;
+    --hl-border: #2255aa; --hl-bg: rgba(34,85,170,0.07);
+    --popover-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    --border: #dddddd;
+    --ribbon-bg: rgba(204,102,34,0.08);
+  }
+  :root[data-dark] {
+    --bg: #1a1a1a; --fg: #cccccc;
+    --blue: #4499ff; --magenta: #EE66AA; --orange: #FFAA44;
+    --hl-border: #44AAFF; --hl-bg: rgba(68,170,255,0.08);
+    --popover-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    --border: #333333;
+    --ribbon-bg: rgba(255,170,68,0.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    padding: 1.5rem 3rem 3rem 3rem;
+    overflow-x: auto;
+  }
+
+  .controls-row {
+    display: flex;
+    align-items: center;
+    gap: 2ch;
+    margin-bottom: 0.4rem;
+    max-width: 72ch;
+  }
+
+  .controls-row a {
+    color: var(--blue);
+    text-decoration: none;
+    font-family: inherit;
+    font-size: 14px;
+  }
+
+  .controls-row a:hover { text-decoration: underline; }
+
+  #dark-toggle {
+    background: none; border: none; cursor: pointer;
+    font-size: 15px; color: var(--blue);
+    padding: 0; font-family: inherit; line-height: 1;
+  }
+
+  .share-wrap {
+    position: relative;
+    margin-left: auto;
+  }
+
+  #share-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 15px; color: var(--blue);
+    padding: 0; font-family: inherit; line-height: 1;
+  }
+
+  #share-popover {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    box-shadow: var(--popover-shadow);
+    min-width: 160px;
+    z-index: 100;
+    overflow: hidden;
+  }
+
+  #share-popover.open { display: block; }
+
+  .share-option {
+    display: flex;
+    align-items: center;
+    gap: 1ch;
+    padding: 0.55rem 1rem;
+    color: var(--fg);
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    font-family: inherit;
+    font-size: 14px;
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .share-option:last-child { border-bottom: none; }
+  .share-option:hover { color: var(--blue); }
+
+  .doc {
+    white-space: pre;
+    display: block;
+    width: fit-content;
+    margin: 0; padding: 0;
+    color: var(--fg);
+  }
+
+  .doc b { font-weight: bold; color: var(--fg); }
+  .doc a { color: var(--fg); }
+
+  .c-blue    { color: var(--blue); }
+  .c-magenta { color: var(--magenta); }
+  .c-orange  { color: var(--orange); }
+
+  .muted { color: var(--blue); }
+
+  .hl {
+    display: inline-block;
+    border-left: 3px solid var(--hl-border);
+    background: var(--hl-bg);
+    padding-left: 6px;
+    margin-left: -6px;
+  }
+
+  .ribbon {
+    display: block;
+    max-width: 72ch;
+    padding: 0.55rem 0.9rem;
+    margin: 0.4rem 0 1rem 0;
+    border-left: 3px solid var(--orange);
+    background: var(--ribbon-bg);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--fg);
+  }
+
+  .ribbon b { color: var(--orange); }
+
+  @media (max-width: 600px) {
+    body { padding: 8px; overflow-x: hidden; }
+    html, body { font-size: 12px; }
+    .controls-row { flex-wrap: wrap; }
+    .doc { font-size: clamp(7px, calc((100vw - 16px) / 43.2), 14px); }
+    .lang-block { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  }
+</style>
+
+<div class="controls-row">
+  <button id="dark-toggle" onclick="toggleDark()">&#x263E;</button>
+  <button id="lang-toggle" onclick="toggleLang()" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--blue);padding:0;font-family:inherit;line-height:1;"></button>
+  <div class="share-wrap">
+    <button id="share-btn" onclick="toggleShare()">share &#x2197;</button>
+    <div id="share-popover">
+      <button class="share-option" onclick="copyLink()">&#x1F517; copy link</button>
+      <a class="share-option" id="wa-link" href="#" target="_blank" rel="noopener">&#x1F4AC; WhatsApp</a>
+      <a class="share-option" id="tg-link" href="#" target="_blank" rel="noopener">&#x2708;&#xFE0F; Telegram</a>
+      <a class="share-option" id="fb-link" href="#" target="_blank" rel="noopener">&#x1F310; Facebook</a>
+      <a class="share-option" id="x-link"  href="#" target="_blank" rel="noopener">&#x1D54F; X</a>
+    </div>
+  </div>
+</div>
+
+
+<div class="lang-block" data-lang="en" style="display:none;">
+
+  <div class="ribbon">&#x1F4CC; <b>Dashboard archived.</b> No longer being updated. Final dataset: 1,500 predictions from 2022-Q4 to 2026-Q2.</div>
+
+  <div class="doc">========================================================================<br>                             <b>MALDINI STATS</b><br>========================================================================<br><a href="https://www.youtube.com/@mundomaldini" target="_blank" rel="noopener">@mundomaldini</a> is a Spanish football journalist who publishes<br>weekly match predictions on YouTube. Predictions are evaluated<br>with <b>Brier scores</b> (lower = more accurate). A <b>superforecaster</b><br>scores Brier &lt; 0.20. Naive baseline: 0.2222 (33% each H/D/A).<br>========================================================================</div>
+
+  <div class="doc"><span class="hl">🏆 <b>SUPERFORECASTER?</b>  <b>[x] YES</b>   [ ] no     (Brier 0.1916 &lt; 0.2)</span><br><br>           All-time Brier    : <b>0.1916</b><br>           ├██████████████████████████████░░┊░░░░░░░░░░░░░░░┤<br>           0                               .20            .30<br>------------------------------------------------------------------------<br>  Scored predictions: <b>1500</b>           <b>Benchmarks:</b><br>  Accuracy          : <b>57.0%</b>            Naive baseline   : 0.2222<br>  Best quarter  : 2023-Q2              Betting markets  : 0.19<br>  Worst quarter : <span class="c-magenta">2023-Q1</span>              Maldini          : <b>0.1916</b><br>========================================================================</div>
+
+  <div class="doc"><b>Quarterly Brier Scores</b><br>  0.28 ┤                                                              <br>  0.26 ┤                                                              <br>  0.24 ┤      ██                                                      <br>  0.22 ┤  ██  ██                                                      <br>  0.20 ┤  ██··██··················██··················██······ threshold<br>  0.18 ┤  ██  ██              ██  ██  ██  ██  ██      ██  ██  ██  ██  <br>  0.16 ┤  ██  ██      ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  <br>  0.14 ┤  ██  ██      ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  <br>  0.12 ┤  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  <br>       └────────────────────────────────────────────────────────────────<br>        Q4  Q1  Q2  Q3  Q4  Q1  Q2  Q3  Q4  Q1  Q2  Q3  Q4  Q1  Q2<br>        '22 '23 '23 '23 '23 '24 '24 '24 '24 '25 '25 '25 '25 '26 '26<br>========================================================================</div>
+
+  <div class="doc"><b>Competition breakdown  (sorted by Brier, | marks 0.20):</b><br>  Competition            │  Brier │ Bar(|=.20)       │ n (%)<br>------------------------------------------------------------------------<br>  Supercopa de Europa    │ 0.1225 │ ██████░░░░|░░░░░ │ 1 (0.1%)<br>  Copa de África         │ 0.1347 │ ███████░░░|░░░░░ │ 9 (0.6%)<br>  Supercopa de España    │ 0.1562 │ ████████░░|░░░░░ │ 7 (0.5%)<br>  UEFA Europa League     │ 0.1600 │ ████████░░|░░░░░ │ 1 (0.1%)<br>  Copa Libertadores      │ 0.1746 │ █████████░|░░░░░ │ 15 (1.0%)<br>  Mundial de Clubes      │ 0.1757 │ █████████░|░░░░░ │ 47 (3.1%)<br>  Copa del Rey           │ 0.1767 │ █████████░|░░░░░ │ 26 (1.7%)<br>  UEFA Champions League  │ 0.1861 │ █████████░|░░░░░ │ 420 (28.0%)<br>  LaLiga                 │ 0.1952 │ ██████████|░░░░░ │ 909 (60.6%)<br>  Copa América           │ 0.1971 │ ██████████|░░░░░ │ 7 (0.5%)<br>  Eurocopa               │ <span class="c-magenta">0.2035</span> │ ██████████|░░░░░ │ 38 (2.5%)<br>  Mundial                │ <span class="c-magenta">0.2265</span> │ ██████████┼█░░░░ │ 13 (0.9%)<br>  UEFA Nations League    │ <span class="c-magenta">0.2396</span> │ ██████████┼█░░░░ │ 7 (0.5%)<br>========================================================================</div>
+
+  <div class="doc"><b>Recent predictions  (last 15, all scored):</b><br>  Date       │ Home          │ Away          │ H/D/A%   │ R │ Brier<br>------------------------------------------------------------------------<br>  2026-05-08 │ Levante       │ Osasuna       │ 40/30/30 │ H │ 0.1800<br>  2026-05-08 │ Elche         │ Deportivo Ala │ 40/30/30 │ D │ <span class="c-magenta">0.2467</span><br>  2026-05-08 │ Real Sociedad │ Real Betis    │ 40/30/30 │ D │ <span class="c-magenta">0.2467</span><br>  2026-05-08 │ Athletic Club │ Valencia      │ 45/30/25 │ A │ <span class="c-magenta">0.2850</span><br>  2026-05-08 │ Sevilla       │ Español       │ 45/30/25 │ H │ 0.1517<br>  2026-05-08 │ Real Oviedo   │ Getafe        │ 20/30/50 │ D │ <span class="c-magenta">0.2600</span><br>  2026-05-08 │ Barça         │ Real Madrid   │ 55/30/15 │ H │ 0.1050<br>  2026-05-08 │ Mallorca      │ Villarreal    │ 45/35/20 │ D │ <span class="c-magenta">0.2217</span><br>  2026-05-08 │ Atlético de M │ Celta         │ 60/30/10 │ A │ <span class="c-magenta">0.4200</span><br>  2026-05-01 │ Español       │ Real Madrid   │ 30/40/30 │ A │ <span class="c-magenta">0.2467</span><br>  2026-05-01 │ Real Betis    │ Real Oviedo   │ 70/20/10 │ H │ 0.0467<br>  2026-05-01 │ Getafe        │ Rayo Vallecan │ 50/30/20 │ A │ <span class="c-magenta">0.3267</span><br>  2026-05-01 │ Girona        │ Mallorca      │ 50/30/20 │ A │ <span class="c-magenta">0.3267</span><br>  2026-05-01 │ Osasuna       │ Barça         │ 20/30/50 │ A │ 0.1267<br>  2026-05-01 │ Alavés        │ Athletic Club │ 40/30/30 │ A │ <span class="c-magenta">0.2467</span><br>========================================================================</div>
+
+  <div class="doc"><b>Definitions</b><br>------------------------------------------------------------------------<br>  <u>Brier score</u>    : Probabilistic accuracy metric. Lower = better.<br>                 : Formula: (pH-rH)^2 + (pD-rD)^2 + (pA-rA)^2<br>                 : p = predicted prob.; r = 1 if outcome, 0 if not.<br>                 : Range 0-2. Perfect = 0. Naive baseline = 0.2222.<br><br>  <u>Superforecaster</u>: Avg Brier &lt; 0.20 over 100+ predictions.<br>                 : Concept: Philip Tetlock's Good Judgment Project.<br><br>  <u>Naive baseline</u> : 0.2222 — equal 1/3 to each outcome (H/D/A).<br>  <u>Betting markets</u>: ~0.19 — wisdom of crowds (aggregated market odds).<br><br>  <u>Avg Brier</u>      : Mean Brier score across all scored predictions.<br>  <u>Accuracy %</u>     : % where top predicted outcome == actual result.<br>  <u>Scored</u>         : Result confirmed in TheSportsDB; match played.<br>  <u>Colors</u>         : <span class="c-magenta">■</span> highlighted &gt; 0.20<br></div>
+
+  <div class="doc">========================================================================<br>last updated: 2026-05-11 21:05<br>author      : <a href="https://github.com/0trm" target="_blank" rel="noopener">0trm</a><br>🐟</div>
+
+</div>
+
+<div class="lang-block" data-lang="es" style="display:none;">
+
+  <div class="ribbon">&#x1F4CC; <b>Panel archivado.</b> Ya no se actualiza. Conjunto final: 1.500 predicciones desde 2022-Q4 hasta 2026-Q2.</div>
+
+  <div class="doc">========================================================================<br>                             <b>MALDINI STATS</b><br>========================================================================<br><a href="https://www.youtube.com/@mundomaldini" target="_blank" rel="noopener">@mundomaldini</a> es un periodista español de fútbol que publica<br>predicciones semanales en YouTube. Este informe las puntúa y evalúa con<br><b>puntuaciones Brier</b> (menor = más preciso). Un <b>superpronosticador</b> puntúa<br>Brier &lt; 0.20. Base aleatoria: 0.2222 (33% cada L/E/V).<br>========================================================================</div>
+
+  <div class="doc"><span class="hl">🏆 <b>¿SUPERPRONOSTICADOR?</b>  <b>[x] SÍ</b>   [ ] no   (Brier 0.1916 &lt; 0.2)</span><br><br>           Brier histórico   : <b>0.1916</b><br>           ├██████████████████████████████░░┊░░░░░░░░░░░░░░░┤<br>           0                               .20            .30<br>------------------------------------------------------------------------<br>  Predicciones      : <b>1500</b>           <b>Referencias:</b><br>  Precisión         : <b>57.0%</b>            Base aleatoria   : 0.2222<br>  Mejor trimestre: 2023-Q2             Mercados apuestas: 0.19<br>  Peor trimestre : <span class="c-magenta">2023-Q1</span>             Maldini          : <b>0.1916</b><br>========================================================================</div>
+
+  <div class="doc"><b>Puntuaciones trimestrales Brier</b><br>  0.28 ┤                                                              <br>  0.26 ┤                                                              <br>  0.24 ┤      ██                                                      <br>  0.22 ┤  ██  ██                                                      <br>  0.20 ┤  ██··██··················██··················██········· umbral<br>  0.18 ┤  ██  ██              ██  ██  ██  ██  ██      ██  ██  ██  ██  <br>  0.16 ┤  ██  ██      ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  <br>  0.14 ┤  ██  ██      ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  <br>  0.12 ┤  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  <br>       └────────────────────────────────────────────────────────────────<br>        Q4  Q1  Q2  Q3  Q4  Q1  Q2  Q3  Q4  Q1  Q2  Q3  Q4  Q1  Q2<br>        '22 '23 '23 '23 '23 '24 '24 '24 '24 '25 '25 '25 '25 '26 '26<br>========================================================================</div>
+
+  <div class="doc"><b>Desglose por competición  (ordenado por Brier, | = 0.20):</b><br>  Competición            │  Brier │ Bar(|=.20)       │ n (%)<br>------------------------------------------------------------------------<br>  Supercopa de Europa    │ 0.1225 │ ██████░░░░|░░░░░ │ 1 (0.1%)<br>  Copa de África         │ 0.1347 │ ███████░░░|░░░░░ │ 9 (0.6%)<br>  Supercopa de España    │ 0.1562 │ ████████░░|░░░░░ │ 7 (0.5%)<br>  UEFA Europa League     │ 0.1600 │ ████████░░|░░░░░ │ 1 (0.1%)<br>  Copa Libertadores      │ 0.1746 │ █████████░|░░░░░ │ 15 (1.0%)<br>  Mundial de Clubes      │ 0.1757 │ █████████░|░░░░░ │ 47 (3.1%)<br>  Copa del Rey           │ 0.1767 │ █████████░|░░░░░ │ 26 (1.7%)<br>  UEFA Champions League  │ 0.1861 │ █████████░|░░░░░ │ 420 (28.0%)<br>  LaLiga                 │ 0.1952 │ ██████████|░░░░░ │ 909 (60.6%)<br>  Copa América           │ 0.1971 │ ██████████|░░░░░ │ 7 (0.5%)<br>  Eurocopa               │ <span class="c-magenta">0.2035</span> │ ██████████|░░░░░ │ 38 (2.5%)<br>  Mundial                │ <span class="c-magenta">0.2265</span> │ ██████████┼█░░░░ │ 13 (0.9%)<br>  UEFA Nations League    │ <span class="c-magenta">0.2396</span> │ ██████████┼█░░░░ │ 7 (0.5%)<br>========================================================================</div>
+
+  <div class="doc"><b>Predicciones recientes:</b><br>  Fecha      │ Local         │ Visitante     │ L/E/V%   │ R │ Brier<br>------------------------------------------------------------------------<br>  2026-05-08 │ Levante       │ Osasuna       │ 40/30/30 │ H │ 0.1800<br>  2026-05-08 │ Elche         │ Deportivo Ala │ 40/30/30 │ D │ <span class="c-magenta">0.2467</span><br>  2026-05-08 │ Real Sociedad │ Real Betis    │ 40/30/30 │ D │ <span class="c-magenta">0.2467</span><br>  2026-05-08 │ Athletic Club │ Valencia      │ 45/30/25 │ A │ <span class="c-magenta">0.2850</span><br>  2026-05-08 │ Sevilla       │ Español       │ 45/30/25 │ H │ 0.1517<br>  2026-05-08 │ Real Oviedo   │ Getafe        │ 20/30/50 │ D │ <span class="c-magenta">0.2600</span><br>  2026-05-08 │ Barça         │ Real Madrid   │ 55/30/15 │ H │ 0.1050<br>  2026-05-08 │ Mallorca      │ Villarreal    │ 45/35/20 │ D │ <span class="c-magenta">0.2217</span><br>  2026-05-08 │ Atlético de M │ Celta         │ 60/30/10 │ A │ <span class="c-magenta">0.4200</span><br>  2026-05-01 │ Español       │ Real Madrid   │ 30/40/30 │ A │ <span class="c-magenta">0.2467</span><br>  2026-05-01 │ Real Betis    │ Real Oviedo   │ 70/20/10 │ H │ 0.0467<br>  2026-05-01 │ Getafe        │ Rayo Vallecan │ 50/30/20 │ A │ <span class="c-magenta">0.3267</span><br>  2026-05-01 │ Girona        │ Mallorca      │ 50/30/20 │ A │ <span class="c-magenta">0.3267</span><br>  2026-05-01 │ Osasuna       │ Barça         │ 20/30/50 │ A │ 0.1267<br>  2026-05-01 │ Alavés        │ Athletic Club │ 40/30/30 │ A │ <span class="c-magenta">0.2467</span><br>========================================================================</div>
+
+  <div class="doc"><b>Definiciones</b><br>------------------------------------------------------------------------<br>  <u>Puntuación Brier</u>: Métrica de precisión probabilística. Menor = mejor.<br>                 : Fórmula: (pH-rH)^2 + (pD-rD)^2 + (pA-rA)^2<br>                 : p = prob. predicha; r = 1 si ocurre, 0 si no.<br>                 : Rango 0-2. Perfecto = 0. Base aleatoria = 0.2222.<br><br>  <u>Superpronosticador</u>: Brier medio &lt; 0.20 en 100+ predicciones.<br>                 : Concepto: Good Judgment Project (Philip Tetlock).<br><br>  <u>Base aleatoria</u> : 0.2222 — 1/3 igual a cada resultado (L/E/V).<br>  <u>Mercados apuestas</u>: ~0.19 — sabiduría colectiva (cuotas de mercado).<br><br>  <u>Brier medio</u>    : Brier medio sobre todas las predicciones puntuadas.<br>  <u>Precisión %</u>    : % donde el resultado más probable coincide con real.<br>  <u>Puntuada</u>       : Resultado confirmado en TheSportsDB; partido jugado.<br>  <u>Colores</u>        : <span class="c-magenta">■</span> highlighted &gt; 0.20<br></div>
+
+  <div class="doc">========================================================================<br>actualizado    : 2026-05-11 21:05<br>autor          : <a href="https://github.com/0trm" target="_blank" rel="noopener">0trm</a><br>🐟</div>
+
+</div>
+
+
+<script>
+  function toggleDark() {
+    const on = document.documentElement.toggleAttribute('data-dark');
+    document.getElementById('dark-toggle').textContent = on ? '\u2600' : '\u263E';
+    localStorage.setItem('dark', on ? '1' : '');
+  }
+  if (localStorage.getItem('dark')) {
+    document.documentElement.setAttribute('data-dark', '');
+    document.getElementById('dark-toggle').textContent = '\u2600';
+  }
+
+  function setLang(lang) {
+    document.querySelectorAll('.lang-block').forEach(el => {
+      el.style.display = el.dataset.lang === lang ? '' : 'none';
+    });
+    document.getElementById('lang-toggle').textContent = lang === 'en' ? 'es' : 'en';
+    localStorage.setItem('lang', lang);
+  }
+  function toggleLang() {
+    const current = localStorage.getItem('lang') || 'en';
+    setLang(current === 'en' ? 'es' : 'en');
+  }
+  setLang(localStorage.getItem('lang') || 'es');
+
+  function toggleShare() {
+    const pop = document.getElementById('share-popover');
+    const opening = !pop.classList.contains('open');
+    pop.classList.toggle('open');
+    if (opening) {
+      const url = encodeURIComponent(window.location.href);
+      document.getElementById('wa-link').href = 'https://wa.me/?text=' + url;
+      document.getElementById('tg-link').href = 'https://t.me/share/url?url=' + url;
+      document.getElementById('fb-link').href = 'https://www.facebook.com/sharer/sharer.php?u=' + url;
+      document.getElementById('x-link').href  = 'https://x.com/intent/tweet?url=' + url;
+    }
+  }
+
+  function copyLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      const btn = document.getElementById('share-btn');
+      btn.textContent = 'copied \u2713';
+      setTimeout(() => { btn.textContent = 'share \u2197'; }, 1600);
+    });
+    document.getElementById('share-popover').classList.remove('open');
+  }
+
+  document.addEventListener('click', (e) => {
+    const wrap = document.querySelector('.share-wrap');
+    if (!wrap.contains(e.target)) {
+      document.getElementById('share-popover').classList.remove('open');
+    }
+  });
+</script>
+<br>
+</br>
+<p align="left" style="color: grey; font-size: 0.92em;">Built <s>by</s> with AI.<br/></p>
