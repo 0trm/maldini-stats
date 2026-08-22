@@ -1,8 +1,6 @@
 # Maldini
 
-*Maldini* is one of Spain's most prominent football journalists. Every week on his YouTube channel [@mundomaldini](https://www.youtube.com/@mundomaldini) he makes explicit, probabilistic predictions about upcoming matches. This project captures every prediction, scores it objectively with a [Brier score](https://en.wikipedia.org/wiki/Brier_score), and surfaces the answer in a live dashboard.
-
-**[▶ Live dashboard](https://0trm.github.io/maldini/stats.html)**
+*Maldini* is one of Spain's most prominent football journalists. Every week on his YouTube channel [@mundomaldini](https://www.youtube.com/@mundomaldini) he makes explicit, probabilistic predictions about upcoming matches. This project captures every prediction, scores it objectively with a [Brier score](https://en.wikipedia.org/wiki/Brier_score), and surfaces the answer in a dashboard.
 
 <img width="775" alt="maldini-youtube" src="https://github.com/user-attachments/assets/87c6d194-7d76-4261-be76-b031587856e7" />
 
@@ -188,8 +186,3 @@ To add new videos: append rows to `data/videos.csv` and re-run.
 ## License
 
 MIT
-
-<br>
-
-*Built ~~by~~ with AI.* <br>
-© trm
